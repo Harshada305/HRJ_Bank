@@ -1,0 +1,135 @@
+public class BankMain {
+    private static UserProperties userProperties;
+
+    public static void main(String[] args) {
+        userProperties = new UserProperties("users.properties");
+        HashSet<Account> accountSet = new HashSet<>();
+         Scanner scanner = new Scanner(System.in);
+         System.out.print("Enter username: ");
+         String username = scanner.next();
+         System.out.print("Enter password: ");
+         String password = scanner.next();
+
+         if (authenticateUser(username, password)) {
+             System.out.println("Authentication successful!");
+         } else {
+             System.out.println("Authentication failed. Invalid username or password.");
+         }
+        
+
+
+        accountSet.add(new Account(101, "Yogita Jadhav", 50000.0));
+        accountSet.add(new Account(102, "Sahil Jadhav", 75000.0));
+        accountSet.add(new Account(103, "Neha Kadam", 30000.0));
+        accountSet.add(new Account(104, "Kamal Waware", 60000.0));
+        accountSet.add(new Account(105, "Prnav Utake", 90000.0));
+
+
+        while (true) {
+            System.out.println("\nWelcome to HRJ Bank....:");
+            System.out.println("\nBank Account Management:");
+            System.out.println("1. Create Accounts");
+            System.out.println("2. Sort Accounts");
+            System.out.println("3. Update Account");
+            System.out.println("4. Remove Account");
+            System.out.println("5. Display Accounts");
+            System.out.println("6. Exit");
+            System.out.println("7. User Authentication");
+            System.out.print("Enter your choice: ");
+
+            int choice = scanner.nextInt();
+
+            switch (choice) {
+                case 1:
+                	 System.out.print("Enter Account ID: ");
+	                    int newAccountId = scanner.nextInt();
+	                    System.out.print("Enter Account Holder Name: ");
+	                    String newAccountHolderName = scanner.next();
+	                    System.out.print("Enter Initial Balance: ");
+	                    double newAccountBalance = scanner.nextDouble();
+
+	                    Account newAccount = new Account(newAccountId, newAccountHolderName, newAccountBalance);
+	                    accountSet.add(newAccount);
+
+	                    System.out.println("New Account created successfully!");
+	                    break;
+                case 2:
+                	 ArrayList<Account> sortedAccounts = new ArrayList<>(accountSet);
+	                    Collections.sort(sortedAccounts, Comparator.comparingInt(Account::getAccountId));
+
+	                    System.out.println("Sorted Accounts:");
+	                    for (Account account : sortedAccounts) {
+	                        System.out.println(account);
+	                    }
+	                    break;
+
+                case 3:
+                	System.out.print("Enter Account ID to update: ");
+                    int accountIdToUpdate = scanner.nextInt();
+                    boolean found = false;
+
+                    for (Account account : accountSet) {
+                        if (account.getAccountId() == accountIdToUpdate) {
+                           
+                            System.out.print("Enter new balance for the account: ");
+                            double newBalance = scanner.nextDouble();
+                            account.setBalance(newBalance);
+
+                            System.out.println("Account updated successfully!");
+                            found = true;
+                            break;
+                        }
+                    }
+
+                    if (!found) {
+                        System.out.println("Account not found!");
+                    }
+                    break;
+
+                case 4:
+                	 System.out.print("Enter Account ID to remove: ");
+	                    int accountIdToRemove = scanner.nextInt();
+	                    Iterator<Account> iterator = accountSet.iterator();
+	                    boolean removed = false;
+
+	                    while (iterator.hasNext()) {
+	                        Account account = iterator.next();
+	                        if (account.getAccountId() == accountIdToRemove) {
+	                            iterator.remove();
+	                            System.out.println("Account removed successfully!");
+	                            removed = true;
+	                            break;
+	                        }
+	                    }
+
+	                    if (!removed) {
+	                        System.out.println("Account not found!");
+	                    }
+	                    break;
+
+                case 5:
+                	 System.out.println("Accounts:");
+	                    for (Account account : accountSet) {
+	                        System.out.println(account);
+	                    }
+	                    break;
+
+                case 6:
+                    System.out.println("Exiting the program.");
+                    userProperties.saveProperties();
+                    System.exit(0);
+                    break;
+
+              //  case 7: // User Authentication
+                   
+                default:
+                    System.out.println("Invalid choice. Please enter a valid option.");
+            }
+        }
+    }
+
+    private static boolean authenticateUser(String username, String password) {
+        String savedPassword = userProperties.getProperty(username);
+        return savedPassword != null && savedPassword.equals(password);
+    }
+}
